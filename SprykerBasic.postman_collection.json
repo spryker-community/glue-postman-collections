@@ -1,0 +1,4044 @@
+{
+	"info": {
+		"_postman_id": "1a5a88b0-d089-48b0-9621-54ee945b2a05",
+		"name": "Spryker basic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Prepare customer",
+			"item": [
+				{
+					"name": "Create customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerReference\", jsonData.data.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\" : {\n     \"type\": \"customers\",\n     \"id\": null,\n     \"attributes\": {\n     \t\t\"salutation\": \"Mr\",\n            \"email\": \"{{customerEmail}}\",\n            \"lastName\": \"Order\",\n            \"firstName\": \"Tester\",\n            \"gender\": \"Male\",\n            \"password\": \"{{strongPassword}}\",\n            \"confirmPassword\": \"{{strongPassword}}\",\n            \"acceptedTerms\": true\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get access token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"postman.setEnvironmentVariable(\"token\", jsonData.data.attributes.accessToken);",
+									"postman.setEnvironmentVariable(\"refresh-token\", jsonData.data.attributes.refreshToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "Cookie",
+								"value": "XDEBUG_SESSION=XDEBUG_ECLIPSE",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"access-tokens\",\n        \"attributes\": {\n            \"username\": \"{{customerEmail}}\",\n            \"password\": \"{{customerPassword}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/access-tokens",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"access-tokens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get access token And Merge Guest Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"postman.setEnvironmentVariable(\"token\", jsonData.data.attributes.accessToken);",
+									"postman.setEnvironmentVariable(\"refresh-token\", jsonData.data.attributes.refreshToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"access-tokens\",\n        \"attributes\": {\n            \"username\": \"{{customerEmail}}\",\n            \"password\": \"{{customerPassword}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/access-tokens",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"access-tokens"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Guest Carts",
+			"item": [
+				{
+					"name": "Creating gust cart and adding a product 2 into a guest cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"guest_cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"guest-cart-items\",\n        \"attributes\": {\n            \"sku\": \"{{concrete_product_1}}\",\n            \"quantity\": 1\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/guest-cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-cart-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart contents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}?include=guest-cart-items,cart-rules,promotional-items,gift-cards,vouchers,product-options,sales-units,product-measurement-units,product-labels",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "guest-cart-items,cart-rules,promotional-items,gift-cards,vouchers,product-options,sales-units,product-measurement-units,product-labels"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adding product #2 into the guest cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"guest_cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"guest-cart-items\",\n        \"attributes\": {\n            \"sku\": \"{{concrete_product_2}}\",\n            \"quantity\": 1\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}/guest-cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}",
+								"guest-cart-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change qty of a product #1 in the guest cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"guest_cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"guest-cart-items\",\n        \"attributes\": {\n            \"quantity\": {{quantity}}\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}/guest-cart-items/{{concrete_product_1}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}",
+								"guest-cart-items",
+								"{{concrete_product_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change qty of a product #2 in the guest cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"guest_cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"guest-cart-items\",\n        \"attributes\": {\n            \"quantity\": {{quantity}}\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}/guest-cart-items/{{concrete_product_2}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}",
+								"guest-cart-items",
+								"{{concrete_product_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request for removing an item from the guest cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}/guest-cart-items/{{concrete_product_2}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}",
+								"guest-cart-items",
+								"{{concrete_product_2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Carts",
+			"item": [
+				{
+					"name": "Get carts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"var headerETag = pm.response.headers.get(\"ETag\");",
+									"if (headerETag) {",
+									"headerETag = headerETag.replace('W/','').replace('\"', '').replace('\"', '');",
+									"pm.environment.set(\"cart-etag\", headerETag);",
+									"}",
+									"",
+									"pm.environment.set(\"cart_id\", responseData[0].id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/carts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									"",
+									"var headerETag = pm.response.headers.get(\"ETag\");",
+									"headerETag = headerETag.replace('W/','').replace('\"', '').replace('\"', '');",
+									"",
+									"pm.environment.set(\"cart-etag\", headerETag);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"carts\",\n    \"attributes\": {\n      \"priceMode\": \"{{priceMode}}\",\n      \"currency\": \"{{currency}}\",\n      \"store\": \"{{store}}\",\n      \"name\": \"Test Cart 1\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update cart with current store and currency",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{cart-etag}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"carts\",\n    \"attributes\": {\n      \"priceMode\": \"{{priceMode}}\",\n      \"currency\": \"{{currency}}\",\n      \"store\": \"{{store}}\",\n      \"name\": \"Test Cart 1\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add product #1 to the cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"items\",\n    \"attributes\": {\n      \"sku\": \"{{concrete_product_1}}\",\n      \"quantity\": 1,\n      \"productOptions\": [\n        null\n      ]\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items?include=cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "cart-items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add product #2 to the cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"items\",\n    \"attributes\": {\n      \"sku\": \"{{concrete_product_2}}\",\n      \"quantity\": 1,\n      \"productOptions\": [\n        null\n      ]\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items?include=cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "cart-items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart include items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"carts\",\n    \"attributes\": {\n      \"priceMode\": \"{{priceMode}}\",\n      \"currency\": \"{{currency}}\",\n      \"store\": \"{{store}}\",\n      \"name\": \"Test Cart 1\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}?include=items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FIx the store and currency of the cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"pm.environment.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{cart-etag}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"carts\",\n    \"attributes\": {\n      \"priceMode\": \"{{priceMode}}\",\n      \"currency\": \"{{currency}}\",\n      \"store\": \"{{store}}\",\n      \"name\": \"Test Cart 1\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}?include=items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update cart item #1 quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"items\",\n    \"attributes\": {\n      \"quantity\": 3\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items/{{concrete_product_1}}?include=cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items",
+								"{{concrete_product_1}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "cart-items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update cart item #2 quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"cart_id\", responseData.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"items\",\n    \"attributes\": {\n      \"quantity\": 3\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items/{{concrete_product_2}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items",
+								"{{concrete_product_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove item #1 from the cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items/{{concrete_product_1}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items",
+								"{{concrete_product_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove item #2 from the cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/items/{{concrete_product_2}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"items",
+								"{{concrete_product_2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gift Cards",
+			"item": [
+				{
+					"name": "Redeem voucher for Customer cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Cookie",
+								"value": "XDEBUG_SESSION=XDEBUG_ECLIPSE",
+								"type": "default"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"vouchers\",\n        \"attributes\": {\n            \"code\": \"SPECIAL10\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/vouchers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"vouchers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redeem gift card for Customer cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "XDEBUG_SESSION=XDEBUG_ECLIPSE",
+								"type": "default"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"cart-codes\",\n        \"attributes\": {\n            \"code\": \"GC-EXMXI2UK-25\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}/cart-codes?include=carts,cart-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}",
+								"cart-codes"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "carts,cart-items"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve gift cards for Customer cart",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"cart-codes\",\n        \"attributes\": {\n            \"code\": \"SPECIAL10\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/carts/{{cart_id}}?include=gift-cards",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "gift-cards"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redeem gift card for Guest cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "X-Anonymous-Customer-Unique-Id",
+								"value": "{{anonymous_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"cart-codes\",\n        \"attributes\": {\n            \"code\": \"{{gift_card_code}}\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/guest-carts/{{guest_cart_id}}/cart-codes?include=vouchers,gift-cards",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"guest-carts",
+								"{{guest_cart_id}}",
+								"cart-codes"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "vouchers,gift-cards"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Place order for customer",
+			"item": [
+				{
+					"name": "Get available payment methods",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData.data.attributes.orderReference);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"checkout-data\",\n        \"attributes\": {\n            \"idCart\": \"{{cart_id}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/checkout-data?include=payment-methods",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"checkout-data"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "payment-methods"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get available shipment methods",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData.data.attributes.orderReference);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"checkout-data\",\n        \"attributes\": {\n            \"idCart\": \"{{cart_id}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/checkout-data?include=shipment-methods,shipments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"checkout-data"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "shipment-methods,shipments"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer addresses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData.data.attributes.orderReference);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"checkout-data\",\n        \"attributes\": {\n            \"idCart\": \"{{cart_id}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/checkout-data?include=addresses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"checkout-data"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "addresses"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData.data.attributes.orderReference);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"checkout\",\n        \"attributes\": {\n            \"customer\": {\n                \"salutation\": \"Mr\",\n                \"email\": \"{{customerEmail}}\",\n                \"firstName\": \"spencor\",\n                \"lastName\": \"hopkin\"\n            },\n            \"idCart\": \"{{cart_id}}\",\n            \"billingAddress\": {\n                \"salutation\": \"Mr\",\n                \"firstName\": \"Spencor\",\n                \"lastName\": \"Hopkin\",\n                \"address1\": \"Julie-Wolfthorn-Straße\",\n                \"address2\": \"1\",\n                \"address3\": \"new address\",\n                \"zipCode\": \"10115\",\n                \"city\": \"Berlin\",\n                \"iso2Code\": \"DE\",\n                \"company\": \"spryker\",\n                \"phone\": \"+49 (30) 2084 98350\"\n            },\n            \"shippingAddress\": {\n                \"salutation\": \"Mr\",\n                \"firstName\": \"Spencor\",\n                \"lastName\": \"Hopkin\",\n                \"address1\": \"Julie-Wolfthorn-Straße\",\n                \"address2\": \"1\",\n                \"address3\": \"new one\",\n                \"zipCode\": \"10115\",\n                \"city\": \"Berlin\",\n                \"iso2Code\": \"DE\",\n                \"company\": \"spryker\",\n                \"phone\": \"+49 (30) 2084 98350\"\n            },\n            \"payments\": [\n                {\n                    \"dummyMarketplacePaymentInvoice\": {\n                        \"dateOfBirth\": \"08.04.1986\"\n                    },\n\n\"paymentMethodName\": \"Credit Card\",\n                \"paymentProviderName\": \"dummyPayment\"\n                                }\n            ],\n            \"shipment\": {\n                \"idShipmentMethod\": 1\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/checkout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place order with 2 shipments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData.data.attributes.orderReference);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"checkout\",\n        \"attributes\": {\n            \"customer\": {\n                \"salutation\": \"Mr\",\n                \"email\": \"{{customerEmail}}\",\n                \"firstName\": \"spencor\",\n                \"lastName\": \"hopkin\"\n            },\n            \"idCart\": \"{{cart_id}}\",\n            \"billingAddress\": {\n                \"salutation\": \"Mr\",\n                \"firstName\": \"Spencor\",\n                \"lastName\": \"Hopkin\",\n                \"address1\": \"Julie-Wolfthorn-Straße\",\n                \"address2\": \"1\",\n                \"address3\": \"new address\",\n                \"zipCode\": \"10115\",\n                \"city\": \"Berlin\",\n                \"iso2Code\": \"DE\",\n                \"company\": \"spryker\",\n                \"phone\": \"+49 (30) 2084 98350\"\n            },\n            \"payments\": [\n                {\n                    \"dummyMarketplacePaymentInvoice\": {\n                        \"dateOfBirth\": \"08.04.1986\"\n                    },\n                    \"paymentMethodName\": \"Credit Card\",\n                    \"paymentProviderName\": \"dummyPayment\"\n                }\n            ],\n            \"shipments\":[\n                {\n                    \"items\":[\n                        \"{{concrete_product_1}}\"\n                    ],\n                    \"shippingAddress\":{\n                        \"salutation\":\"Mr\",\n                        \"firstName\":\"Spencor\",\n                        \"lastName\":\"Hopkin\",\n                        \"address1\":\"street1\",\n                        \"address2\":\"2\",\n                        \"address3\":\"\",\n                        \"zipCode\":\"12345\",\n                        \"city\":\"Nocity\",\n                        \"iso2Code\":\"DE\",\n                        \"company\":\"Company\",\n                        \"phone\":\"123123123\"\n                    },\n                    \"idShipmentMethod\":1,\n                    \"requestedDeliveryDate\":null\n                },\n                {\n                    \"items\":[\n                        \"{{concrete_product_2}}\"\n                    ],\n                    \"shippingAddress\":{\n                        \"salutation\":\"Mr\",\n                        \"firstName\":\"Spencor\",\n                        \"lastName\":\"Hopkin\",\n                        \"address1\":\"street 2\",\n                        \"address2\":\"123\",\n                        \"address3\":\"\",\n                        \"zipCode\":\"54123\",\n                        \"city\":\"Anonymcity\",\n                        \"iso2Code\":\"DE\",\n                        \"company\":\"Company\",\n                        \"phone\":\"123123123\",\n                        \"isDefaultBilling\":false,\n                        \"isDefaultShipping\":false\n                    },\n                    \"idShipmentMethod\":2,\n                    \"requestedDeliveryDate\":null\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/checkout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Orders",
+			"item": [
+				{
+					"name": "Get list of orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"customerOrderReference\", jsonData[0].id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/orders",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"firstOrderItemUuid\", jsonData.data.attributes.items[0].uuid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/orders/{{customerOrderReference}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"orders",
+								"{{customerOrderReference}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Returns",
+			"item": [
+				{
+					"name": "Get return reasons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/return-reasons",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"return-reasons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a return",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"returnId\", jsonData.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"returns\",\n        \"attributes\": {\n            \"store\": \"{{store}}\",\n\t\t\t\"returnItems\": [\n\t\t\t\t{\n\t\t\t\t\t\"salesOrderItemUuid\": \"{{firstOrderItemUuid}}\",\n\t\t\t\t\t\"reason\": \"{{return_reason}}\"\n\t\t\t\t}\n\t\t\t]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/returns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"returns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get returns",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"returnId\", responseData[0].id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/returns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"returns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get return by return ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/returns/{{returnId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"returns",
+								"{{returnId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlists",
+			"item": [
+				{
+					"name": "Create a wishlist - valid data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"wishlist_id\", jsonData.data.id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"wishlists\",\n        \"attributes\": {\n            \"name\": \"{{wishlist_name}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/wishlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists"
+							]
+						},
+						"description": "Input:\n\ncustomer access token\nname\n\nOutput:\n\nWishlist\n  ID\n  Name"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a wishlist - valid data",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"wishlists\",\n        \"attributes\": {\n            \"name\": \"{{wishlist_name_new}}\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/wishlists/{{wishlist_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists",
+								"{{wishlist_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer wishlists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/wishlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists"
+							]
+						},
+						"description": "Input:\n\nCustomer is identified by access token\n\n\nOutput:\n\nWishlist(s)\nID\nName\nNumber of items on the list\nDate of creation\nDate of last update"
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer wishlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/wishlists/{{wishlist_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists",
+								"{{wishlist_id}}"
+							]
+						},
+						"description": "Input:\n\nCustomer is identified by access token\n\n\nOutput:\n\nWishlist(s)\nID\nName\nNumber of items on the list\nDate of creation\nDate of last update"
+					},
+					"response": []
+				},
+				{
+					"name": "Add an item to customer wishlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"wishlist-items\",\n    \"attributes\": {\n      \"sku\": \"{{concrete_product_1}}\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/wishlists/{{wishlist_id}}/wishlist-items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists",
+								"{{wishlist_id}}",
+								"wishlist-items"
+							]
+						},
+						"description": "Input:\n\nCustomer is identified by access token\n\n\nOutput:\n\nWishlist(s)\nID\nName\nNumber of items on the list\nDate of creation\nDate of last update"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a wishlist - existing wishlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/wishlists/{{wishlist_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"wishlists",
+								"{{wishlist_id}}"
+							]
+						},
+						"description": "input:\n\nwishlist ID\n\n\noutput:\n\nHTTP 204\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Abstract Products",
+			"item": [
+				{
+					"name": "Request abstract product by abstract sku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/abstract-products/{{abstract_sku}}?include=abstract-product-image-sets,abstract-product-availabilities,abstract-product-prices,concrete-product-availabilities,concrete-product-image-sets,concrete-product-prices,concrete-products,product-tax-sets,product-labels,category-nodes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"abstract-products",
+								"{{abstract_sku}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "abstract-product-image-sets,abstract-product-availabilities,abstract-product-prices,concrete-product-availabilities,concrete-product-image-sets,concrete-product-prices,concrete-products,product-tax-sets,product-labels,category-nodes"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieves abstract product prices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/abstract-products/{{abstract_sku}}/abstract-product-prices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"abstract-products",
+								"{{abstract_sku}}",
+								"abstract-product-prices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieves abstract product image sets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/abstract-products/{{abstract_sku}}/abstract-product-image-sets",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"abstract-products",
+								"{{abstract_sku}}",
+								"abstract-product-image-sets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Catalog Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/catalog-search?include=abstract-products&sort={{sort_name_asc}}&currency={{currency}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"catalog-search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{abstract_sku}}",
+									"disabled": true
+								},
+								{
+									"key": "price%5Bmin%5D",
+									"value": "{{min_price}}",
+									"disabled": true
+								},
+								{
+									"key": "price%5Bmax%5D",
+									"value": "{{max_price}}",
+									"disabled": true
+								},
+								{
+									"key": "include",
+									"value": "abstract-products"
+								},
+								{
+									"key": "brand[]",
+									"value": "{{brand_name1}}",
+									"disabled": true
+								},
+								{
+									"key": "brand[]",
+									"value": "{{brand_name2}}",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "{{category1}}",
+									"disabled": true
+								},
+								{
+									"key": "ipp",
+									"value": "{{ipp24}}",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "{{page1}}",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "{{sort_name_asc}}"
+								},
+								{
+									"key": "rating",
+									"value": "{{rating5}}",
+									"disabled": true
+								},
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Catalog Search a product by attributes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/catalog-search?q=&color[]={{color1}}&color[]={{color2}}&weight={{weight}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"catalog-search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": ""
+								},
+								{
+									"key": "color[]",
+									"value": "{{color1}}"
+								},
+								{
+									"key": "color[]",
+									"value": "{{color2}}"
+								},
+								{
+									"key": "weight",
+									"value": "{{weight}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Catalog Search Suggestions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/catalog-search-suggestions?q={{abstract_sku}}&include=abstract-products&currency={{currency_eur}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"catalog-search-suggestions"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{concrete_sku}}",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "{{category_name}}",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "{{brand_name1}}",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "{{color1}}",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "{{abstract_sku}}"
+								},
+								{
+									"key": "include",
+									"value": "abstract-products"
+								},
+								{
+									"key": "currency",
+									"value": "{{currency_eur}}"
+								},
+								{
+									"key": "currency",
+									"value": "{{currency_chf}}",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Request category tree",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/category-trees",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"category-trees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request category node",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/category-nodes/{{categoryNodeId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"category-nodes",
+								"{{categoryNodeId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Navigations",
+			"item": [
+				{
+					"name": "Get main navigation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/navigations/main_navigation?include=category-nodes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"navigations",
+								"main_navigation"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "category-nodes"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get footer navigation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/navigations/footer_navigation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"navigations",
+								"footer_navigation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get payment providers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/navigations/payment_providers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"navigations",
+								"payment_providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get shipment providers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/navigations/shipment_providers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"navigations",
+								"shipment_providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get social links",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/navigations/social_links",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"navigations",
+								"social_links"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Correct type\", function() {",
+							"    pm.expect(jsonData.data.type).to.eql(\"navigations\");",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Correct is_active\", function() {",
+							"    pm.expect(jsonData.data.attributes.isActive).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Contains correct fields in nodes arrays\", function () {",
+							"    pm.expect(jsonData.data.attributes.nodes[0]).to.include.keys('isActive', 'nodeType', 'title', 'url', 'cssClass', 'validFrom', 'validTo', 'children');",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Concrete Products",
+			"item": [
+				{
+					"name": "Retrieves product concrete by sku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/concrete-products/{{concrete_sku}}?include=concrete-product-image-sets,concrete-product-availabilities,concrete-product-prices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concrete-products",
+								"{{concrete_sku}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "concrete-product-image-sets,concrete-product-availabilities,concrete-product-prices"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Profile",
+			"item": [
+				{
+					"name": "Get customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('customer_reference', pm.response.json().data[0].id)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/customers/?include=addresses,wishlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								""
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "addresses,wishlists"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request the list of addresses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"customers\",\n    \"attributes\": {\n      \"firstName\":\"{{firstName}}\",\n\t  \"lastName\":\"{{lastName}}\",\n\t  \"gender\":\"Female\",\n      \"salutation\": \"Ms\",\n      \"dateOfBirth\": \"1999-12-31\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create the first address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"customer_address_uuid_1\", responseData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\" : {\n     \"type\": \"addresses\",\n     \"attributes\": {\n            \"salutation\": \"Mr\",\n            \"firstName\": \"John\",\n            \"lastName\": \"Doe\",\n            \"address1\": \"Default, 33, 11\",\n            \"address2\": \"b\",\n            \"address3\": \"aaa\",\n            \"zipCode\": \"12312\",\n            \"city\": \"Berlin\",\n            \"country\": \"Germany\",\n            \"iso2Code\" : \"DE\",\n            \"phone\": \"22111-3-4-5\",\n            \"isDefaultShipping\": false,\n            \"isDefaultBilling\": false\n    \t}   \n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses"
+							]
+						},
+						"description": "This test is to verify that first address is created successfully first address is set as shipping and billing address by default"
+					},
+					"response": []
+				},
+				{
+					"name": "Create billing address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json().data;",
+									"",
+									"pm.environment.set(\"customer_address_uuid_2\", responseData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\" : {\n     \"type\": \"addresses\",\n     \"attributes\": {\n            \"salutation\": \"Mr\",\n            \"firstName\": \"John\",\n            \"lastName\": \"Doe\",\n            \"address1\": \"billing, 33, 11\",\n            \"address2\": \"b\",\n            \"address3\": \"aaa\",\n            \"zipCode\": \"12312\",\n            \"city\": \"Berlin\",\n            \"country\": \"Germany\",\n            \"iso2Code\": \"DE\",\n            \"phone\": \"22111-3-4-5\",\n            \"isDefaultShipping\": false,\n            \"isDefaultBilling\": true\n    \t}   \n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses"
+							]
+						},
+						"description": "This test is to verify that first address is created successfully first address is set as shipping and billing address by default"
+					},
+					"response": []
+				},
+				{
+					"name": "Create shipping address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\" : {\n     \"type\": \"addresses\",\n     \"attributes\": {\n            \"salutation\": \"Mr\",\n            \"firstName\": \"John\",\n            \"lastName\": \"Doe\",\n            \"address1\": \"Shipping, 33, 11\",\n            \"address2\": \"b\",\n            \"address3\": \"aaa\",\n            \"zipCode\": \"12312\",\n            \"city\": \"Berlin\",\n            \"country\": \"Germany\",\n            \"iso2Code\": \"DE\",\n            \"phone\": \"22111-3-4-5\",\n            \"isDefaultShipping\": true,\n            \"isDefaultBilling\": false\n    \t}   \n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses"
+							]
+						},
+						"description": "This test is to verify that first address is created successfully first address is set as shipping and billing address by default"
+					},
+					"response": []
+				},
+				{
+					"name": "Request to update the billing address to \"isDefaultShipping\": True",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"addresses\",\n        \"id\": \"{{customer_address_uuid_2}}\",\n        \"attributes\": {\n            \"isDefaultShipping\": true\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses/{{customer_address_uuid_2}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses",
+								"{{customer_address_uuid_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete customer address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// //text here",
+									"// pm.sendRequest(",
+									"//     {",
+									"//         url: pm.environment.get(\"url\")+\"/customers/\"+pm.environment.get(\"customer_reference\")+\"/addresses\",  ",
+									"//         method: 'GET',",
+									"//         header: {",
+									"//             \"authorization\": \"Bearer \"+ pm.environment.get(\"token\")",
+									"//         },",
+									"//     },function (err, response){",
+									"//         console.log(response);",
+									"//         var jsonData = response.json();",
+									"//         console.log(jsonData);",
+									"//         pm.environment.set(\"addressId_1\", jsonData.data[0].id);",
+									"    ",
+									"//     }",
+									"// );"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}/addresses/{{customer_address_uuid_1}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}",
+								"addresses",
+								"{{customer_address_uuid_1}}"
+							]
+						},
+						"description": "This test is to verify that request returns valid message and status code if customer does not have any addresses"
+					},
+					"response": []
+				},
+				{
+					"name": "Change password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"customer-password\",\n    \"attributes\": {\n      \"password\": \"change123\",\n      \"newPassword\": \"change1234\",\n      \"confirmPassword\": \"change1234\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/customer-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customer-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Store",
+								"value": "{{store}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/customers/{{customer_reference}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"customers",
+								"{{customer_reference}}"
+							]
+						},
+						"description": "This test is to verify that request returns valid message and status code if customer does not have any addresses"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "abstract_sku",
+			"value": "035"
+		},
+		{
+			"key": "max_price",
+			"value": "299.99"
+		},
+		{
+			"key": "min_price",
+			"value": "59.99"
+		},
+		{
+			"key": "brand_name1",
+			"value": "Sony"
+		},
+		{
+			"key": "brand_name2",
+			"value": "Canon"
+		},
+		{
+			"key": "category1",
+			"value": "1"
+		},
+		{
+			"key": "ipp24",
+			"value": "24"
+		},
+		{
+			"key": "page1",
+			"value": "1"
+		},
+		{
+			"key": "sort_name_asc",
+			"value": "name_asc"
+		},
+		{
+			"key": "rating5",
+			"value": "5"
+		},
+		{
+			"key": "color1",
+			"value": "blue"
+		},
+		{
+			"key": "storage_capacity",
+			"value": "32GB"
+		},
+		{
+			"key": "weight",
+			"value": "18 g"
+		},
+		{
+			"key": "color2",
+			"value": "black"
+		},
+		{
+			"key": "currency_eur",
+			"value": "EUR"
+		},
+		{
+			"key": "category_name",
+			"value": "Cameras"
+		},
+		{
+			"key": "concrete_sku",
+			"value": "035_17360369"
+		},
+		{
+			"key": "currency_chf",
+			"value": "CHF"
+		},
+		{
+			"key": "categoryNodeId",
+			"value": "2",
+			"type": "default"
+		}
+	]
+}
